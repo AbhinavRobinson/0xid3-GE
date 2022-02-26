@@ -1,4 +1,5 @@
-<html>
+<!--suppress JSUnusedGlobalSymbols -->
+<html lang="en">
   <body style="margin: 0; overflow-y: hidden; overflow-x: hidden">
     <canvas id="my_canvas" style="width: 100vw; height: 100vh"></canvas>
     <script>
@@ -17,6 +18,10 @@
         imports
       ).then(function (result) {
         result.instance.exports.main()
+
+        document.onkeydown = () => {
+          result.instance.exports.key_pressed()
+        }
       })
     </script>
   </body>
