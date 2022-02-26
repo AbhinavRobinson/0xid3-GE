@@ -19,8 +19,27 @@
       ).then(function (result) {
         result.instance.exports.main()
 
-        document.onkeydown = () => {
-          result.instance.exports.key_pressed()
+        document.onkeydown = (event) => {
+          let code = 0
+          switch (event.code) {
+            case "ArrowLeft":
+              code = 1;
+              break;
+            case "ArrowRight":
+              code = 2;
+              break;
+            case "ArrowUp":
+              code = 3;
+              break;
+            case "ArrowDown":
+              code = 4;
+              break;
+            case "Space":
+              code = 5;
+              break;
+          }
+
+          result.instance.exports.key_pressed(code)
         }
       })
     </script>

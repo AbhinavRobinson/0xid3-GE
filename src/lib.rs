@@ -31,10 +31,10 @@ pub fn clear_screen_to_color(r: f32, g: f32, b: f32, a: f32) {
 }
 
 thread_local! {
-    pub static EVENT_HANDLER: std::cell::RefCell<Box<dyn FnMut()>> = std::cell::RefCell::new(Box::new(||{}));
+    pub static EVENT_HANDLER: std::cell::RefCell<Box<dyn FnMut(Key)>> = std::cell::RefCell::new(Box::new(|_|{}));
 }
 
-pub fn set_event_handler(function: impl FnMut() + 'static) {
+pub fn set_event_handler(function: impl FnMut(Key) + 'static) {
     EVENT_HANDLER.with(|event_handler| {
         *event_handler.borrow_mut() = Box::new(function);
     })
@@ -48,6 +48,23 @@ pub fn set_event_handler(function: impl FnMut() + 'static) {
 /// ### Notes
 /// This function responds to action handled in javascript.
 #[no_mangle]
-extern "C" fn key_pressed() {
-    EVENT_HANDLER.with(|event_handler| (event_handler.borrow_mut())())
+extern "C" fn key_pressed(value: usize) {
+    let key = match value {
+        1 => Key::Left,
+        2 => Key::Right,
+        3 => Key::Up,
+        4 => Key::Down,
+        5 => Key::Space,
+        _ => return,
+    };
+
+    EVENT_HANDLER.with(|event_handler| (event_handler.borrow_mut())(key))
+}
+
+pub enum Key {
+    Left,
+    Right,
+    Up,
+    Down,
+    Space,
 }
