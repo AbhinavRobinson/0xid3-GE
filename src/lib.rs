@@ -61,7 +61,7 @@ pub fn draw_rectangle(x: f32, y: f32, width: f32, height: f32) {
 
 thread_local! {
     /// Thread's "Local" context, for a single threaded app it's global!
-    pub static EVENT_HANDLER: std::cell::RefCell<Box<dyn FnMut(Key)>> = std::cell::RefCell::new(Box::new(|_|{}));
+    pub static EVENT_HANDLER: std::cell::RefCell<Box<dyn FnMut(Event)>> = std::cell::RefCell::new(Box::new(|_|{}));
 }
 
 /// Add Event Handler to global
@@ -84,7 +84,7 @@ thread_local! {
 ///
 /// ### Panics
 /// This function will panic if the JS function is not found.
-pub fn set_event_handler(function: impl FnMut(Key) + 'static) {
+pub fn set_event_handler(function: impl FnMut(Event) + 'static) {
     EVENT_HANDLER.with(|event_handler| {
         *event_handler.borrow_mut() = Box::new(function);
     })
@@ -108,7 +108,7 @@ extern "C" fn key_pressed(value: usize) {
         _ => return,
     };
 
-    EVENT_HANDLER.with(|event_handler| (event_handler.borrow_mut())(key))
+    EVENT_HANDLER.with(|event_handler| (event_handler.borrow_mut())(Event::KeyDown(key)));
 }
 
 /// Key press enums
@@ -121,4 +121,14 @@ pub enum Key {
     Up,
     Down,
     Space,
+}
+
+pub enum Event {
+    KeyDown(Key),
+    Draw,
+}
+
+#[no_mangle]
+pub extern "C" fn animate() {
+    EVENT_HANDLER.with(|event_handler| (event_handler.borrow_mut())(Event::Draw))
 }
