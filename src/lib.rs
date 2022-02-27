@@ -1,6 +1,7 @@
 extern "C" {
     /// Clears the screen to the given color.
     pub fn js_clear_screen_to_color(r: f32, g: f32, b: f32, a: f32);
+    pub fn js_draw_rectangle(x: f32, y: f32, width: f32, height: f32);
 }
 
 /// Clears the screen to a color
@@ -27,6 +28,12 @@ extern "C" {
 pub fn clear_screen_to_color(r: f32, g: f32, b: f32, a: f32) {
     unsafe {
         js_clear_screen_to_color(r, g, b, a);
+    }
+}
+
+pub fn draw_rectangle(x: f32, y: f32, width: f32, height: f32) {
+    unsafe {
+        js_draw_rectangle(x, y, width, height);
     }
 }
 
