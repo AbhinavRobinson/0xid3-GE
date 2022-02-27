@@ -31,9 +31,11 @@ pub fn clear_screen_to_color(r: f32, g: f32, b: f32, a: f32) {
 }
 
 thread_local! {
+    /// Thread's "Local" context, for a single threaded app it's global!
     pub static EVENT_HANDLER: std::cell::RefCell<Box<dyn FnMut(Key)>> = std::cell::RefCell::new(Box::new(|_|{}));
 }
 
+/// Add Event Handler to global
 pub fn set_event_handler(function: impl FnMut(Key) + 'static) {
     EVENT_HANDLER.with(|event_handler| {
         *event_handler.borrow_mut() = Box::new(function);
@@ -61,6 +63,7 @@ extern "C" fn key_pressed(value: usize) {
     EVENT_HANDLER.with(|event_handler| (event_handler.borrow_mut())(key))
 }
 
+/// Key press enums
 pub enum Key {
     Left,
     Right,
